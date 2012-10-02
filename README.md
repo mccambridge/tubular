@@ -1,4 +1,4 @@
 tubular
 =======
 
-jQuery tubular turns kittens into backgrounds
+jQuery tubular turns cat videos into website backgrounds.  It's that dangerous.
