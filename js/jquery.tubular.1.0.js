@@ -53,6 +53,12 @@
                 width: options.width,
                 height: Math.ceil(options.width / options.ratio),
                 videoId: options.videoId,
+                playerVars: {
+                    controls: 0,
+                    showinfo: 0,
+                    modestbranding: 1,
+                    wmode: 'transparent'
+                },
                 events: {
                     'onReady': onPlayerReady,
                     'onStateChange': onPlayerStateChange
