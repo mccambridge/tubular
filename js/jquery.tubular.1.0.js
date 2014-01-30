@@ -28,7 +28,9 @@
         volumeUpClass: 'tubular-volume-up',
         volumeDownClass: 'tubular-volume-down',
         increaseVolumeBy: 10,
-        start: 0
+        start: 0,
+        videoQuality: 'hd1080',
+        relatedVideos: 0
     };
 
     // methods
@@ -57,7 +59,9 @@
                     controls: 0,
                     showinfo: 0,
                     modestbranding: 1,
-                    wmode: 'transparent'
+                    wmode: 'transparent',
+                    vq: options.videoQuality,
+                    rel: options.relatedVideos
                 },
                 events: {
                     'onReady': onPlayerReady,
