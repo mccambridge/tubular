@@ -19,6 +19,7 @@
         playButtonClass: 'tubular-play',
         pauseButtonClass: 'tubular-pause',
         muteButtonClass: 'tubular-mute',
+        mutedButtonClass: 'tubular-muted',
         volumeUpClass: 'tubular-volume-up',
         volumeDownClass: 'tubular-volume-down',
         increaseVolumeBy: 10,
@@ -101,27 +102,35 @@
         $body.on('click','.' + options.playButtonClass, function(e) { // play button
             player.playVideo();
             e.preventDefault();
-        }).on('click', '.' + options.pauseButtonClass, function(e) { // pause button
+        })
+        .on('click', '.' + options.pauseButtonClass, function(e) { // pause button
             player.pauseVideo();
             e.preventDefault();
-        }).on('click', '.' + options.muteButtonClass, function(e) { // mute button
+        })
+        .on('click', '.' + options.muteButtonClass, function(e) { // mute button
             if (player.isMuted()) {
                 player.unMute();
+                $(this).removeClass(options.mutedButtonClass);
             }
             else {
                 player.mute();
+                $(this).addClass(options.mutedButtonClass);
             }
             e.preventDefault();
-        }).on('click', '.' + options.volumeDownClass, function(e) { // volume down button
+        })
+        .on('click', '.' + options.volumeDownClass, function(e) { // volume down button
             var currentVolume = player.getVolume();
-            if (currentVolume < options.increaseVolumeBy) currentVolume = options.increaseVolumeBy;
-            player.setVolume(currentVolume - options.increaseVolumeBy);
+            if (currentVolume >= options.increaseVolumeBy) {
+                player.setVolume(currentVolume - options.increaseVolumeBy);
+            }
             e.preventDefault();
-        }).on('click', '.' + options.volumeUpClass, function(e) { // volume up button
+        })
+        .on('click', '.' + options.volumeUpClass, function(e) { // volume up button
             if (player.isMuted()) player.unMute(); // if mute is on, unmute
             var currentVolume = player.getVolume();
-            if (currentVolume > 100 - options.increaseVolumeBy) currentVolume = 100 - options.increaseVolumeBy;
-            player.setVolume(currentVolume + options.increaseVolumeBy);
+            if (currentVolume <= 100) {
+                player.setVolume(currentVolume + options.increaseVolumeBy);
+            }
             e.preventDefault();
         });
     };
