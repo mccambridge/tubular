@@ -1,19 +1,13 @@
 /* jQuery tubular plugin
-|* by Sean McCambridge
-|* http://www.seanmccambridge.com/tubular
-|* version: 1.0
-|* updated: October 1, 2012
+|* by Antoine Bisch superseeded on Sean McCambridge
+|* http://jahDsign.com
+|* version: 2.0
+|* updated: October 1, 2014
 |* since 2010
-|* licensed under the MIT License
-|* Enjoy.
-|* 
-|* Thanks,
-|* Sean */
+|* licensed under the MIT License */
 
-;(function ($, window) {
+(function ($, window) {
 
-    // test for feature support and return if failure
-    
     // defaults
     var defaults = {
         ratio: 16/9, // usually either 4/3 or 16/9 -- tweak as needed
@@ -34,11 +28,12 @@
     };
 
     // methods
-
     var tubular = function(node, options) { // should be called on the wrapper div
-        var options = $.extend({}, defaults, options),
-            $body = $('body') // cache body node
-            $node = $(node); // cache wrapper node
+        var $window = $(window), //cache window
+            $body = $('body'), // cache body node
+            $node = $(node), // cache wrapper node
+            $tubularPlayer;
+        options = $.extend({}, defaults, options);
 
         // build container
         var tubularContainer = '<div id="tubular-container" style="overflow: hidden; position: fixed; z-index: 1; width: 100%; height: 100%"><div id="tubular-player" style="position: absolute"></div></div><div id="tubular-shield" style="width: 100%; height: 100%; z-index: 2; position: absolute; left: 0; top: 0;"></div>';
@@ -49,9 +44,8 @@
         $node.css({position: 'relative', 'z-index': options.wrapperZIndex});
 
         // set up iframe player, use global scope so YT api can talk
-        window.player;
         window.onYouTubeIframeAPIReady = function() {
-            player = new YT.Player('tubular-player', {
+            window.player = new YT.Player('tubular-player', {
                 width: options.width,
                 height: Math.ceil(options.width / options.ratio),
                 videoId: options.videoId,
@@ -68,28 +62,28 @@
                     'onStateChange': onPlayerStateChange
                 }
             });
-        }
+        };
 
         window.onPlayerReady = function(e) {
+            $tubularPlayer = $('#tubular-player');
             resize();
             if (options.mute) e.target.mute();
             e.target.seekTo(options.start);
             e.target.playVideo();
-        }
+        };
 
         window.onPlayerStateChange = function(state) {
             if (state.data === 0 && options.repeat) { // video ended and repeat option is set true
                 player.seekTo(options.start); // restart
             }
-        }
+        };
 
         // resize handler updates width, height and offset of player after resize/init
         var resize = function() {
-            var width = $(window).width(),
+            var width = $window.width(),
                 pWidth, // player width, to be defined
-                height = $(window).height(),
-                pHeight, // player height, tbd
-                $tubularPlayer = $('#tubular-player');
+                height = $window.height(),
+                pHeight; // player height, tbd
 
             // when screen aspect ratio differs from video, video must center and underlay one dimension
 
@@ -100,46 +94,45 @@
                 pHeight = Math.ceil(width / options.ratio); // get new player height
                 $tubularPlayer.width(width).height(pHeight).css({left: 0, top: (height - pHeight) / 2}); // player height is greater, offset top; reset left
             }
-
-        }
+        };
 
         // events
-        $(window).on('resize.tubular', function() {
-            resize();
-        })
-
-        $('body').on('click','.' + options.playButtonClass, function(e) { // play button
-            e.preventDefault();
+        $window.on('resize.tubular', function() {resize();});
+        $body.on('click','.' + options.playButtonClass, function(e) { // play button
             player.playVideo();
+            e.preventDefault();
         }).on('click', '.' + options.pauseButtonClass, function(e) { // pause button
-            e.preventDefault();
             player.pauseVideo();
+            e.preventDefault();
         }).on('click', '.' + options.muteButtonClass, function(e) { // mute button
+            if (player.isMuted()) {
+                player.unMute();
+            }
+            else {
+                player.mute();
+            }
             e.preventDefault();
-            (player.isMuted()) ? player.unMute() : player.mute();
         }).on('click', '.' + options.volumeDownClass, function(e) { // volume down button
-            e.preventDefault();
             var currentVolume = player.getVolume();
             if (currentVolume < options.increaseVolumeBy) currentVolume = options.increaseVolumeBy;
             player.setVolume(currentVolume - options.increaseVolumeBy);
-        }).on('click', '.' + options.volumeUpClass, function(e) { // volume up button
             e.preventDefault();
+        }).on('click', '.' + options.volumeUpClass, function(e) { // volume up button
             if (player.isMuted()) player.unMute(); // if mute is on, unmute
             var currentVolume = player.getVolume();
             if (currentVolume > 100 - options.increaseVolumeBy) currentVolume = 100 - options.increaseVolumeBy;
             player.setVolume(currentVolume + options.increaseVolumeBy);
-        })
-    }
+            e.preventDefault();
+        });
+    };
 
     // load yt iframe js api
-
-    var tag = document.createElement('script');
-    tag.src = "//www.youtube.com/iframe_api";
-    var firstScriptTag = document.getElementsByTagName('script')[0];
+    var tag = document.createElement('script'),
+        firstScriptTag = document.getElementsByTagName('script')[0];
+    tag.src = '//www.youtube.com/iframe_api';
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
     // create plugin
-
     $.fn.tubular = function (options) {
         return this.each(function () {
             if (!$.data(this, 'tubular_instantiated')) { // let's only run one
@@ -147,6 +140,6 @@
                 tubular(this, options));
             }
         });
-    }
+    };
 
 })(jQuery, window);
