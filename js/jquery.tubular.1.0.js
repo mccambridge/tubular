@@ -22,6 +22,7 @@
         mutedButtonClass: 'tubular-muted',
         volumeUpClass: 'tubular-volume-up',
         volumeDownClass: 'tubular-volume-down',
+        switchClass: 'tubular-switch',
         increaseVolumeBy: 10,
         start: 0,
         videoQuality: 'hd1080',
@@ -132,7 +133,11 @@
                 player.setVolume(currentVolume + options.increaseVolumeBy);
             }
             e.preventDefault();
-        });
+        })
+        .on('click', '.' + options.switchClass, function(e) { // switch button
+            player.loadVideoById($(this).data('id'));
+            e.preventDefault();
+        })
     };
 
     // load yt iframe js api
