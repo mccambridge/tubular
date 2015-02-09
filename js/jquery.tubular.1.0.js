@@ -60,6 +60,7 @@
                     controls: 0,
                     showinfo: 0,
                     modestbranding: 1,
+                    iv_load_policy: 3,
                     wmode: 'transparent',
                     vq: options.videoQuality,
                     rel: options.relatedVideos,
