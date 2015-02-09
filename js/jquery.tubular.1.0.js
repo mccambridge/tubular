@@ -29,6 +29,7 @@
         volumeDownClass: 'tubular-volume-down',
         increaseVolumeBy: 10,
         start: 0,
+        end: false,
         videoQuality: 'hd1080',
         relatedVideos: 0
     };
@@ -61,7 +62,8 @@
                     modestbranding: 1,
                     wmode: 'transparent',
                     vq: options.videoQuality,
-                    rel: options.relatedVideos
+                    rel: options.relatedVideos,
+                    end: options.end
                 },
                 events: {
                     'onReady': onPlayerReady,
